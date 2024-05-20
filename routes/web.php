@@ -5,13 +5,19 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+
+Route::redirect('/', '/dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function(){
+    Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->name('dashboard');
+
+    Route::resource('project', ProjectController::class);
+    Route::resource('task', TaskController::class);
+    Route::resource('user', UserController::class);
 });
 
 Route::get('/dashboard', function () {
